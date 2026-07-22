@@ -1,0 +1,72 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: chat-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-chatdb}
+      MYSQL_USER: ${DB_USERNAME:-chatuser}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-chatpass}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - chat-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-rootpass}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - chat-network
+
+  chat-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chat-service
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-chatdb}
+      DB_USERNAME: ${DB_USERNAME:-chatuser}
+      DB_PASSWORD: ${DB_PASSWORD:-chatpass}
+      CHAT_ALLOWED_ORIGINS: ${CHAT_ALLOWED_ORIGINS:-*}
+      JAVA_TOOL_OPTIONS: -Xms256m -Xmx512m
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    networks:
+      - chat-network
+
+  chat-client:
+    build:
+      context: ./react-client
+      dockerfile: Dockerfile
+    container_name: chat-client
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      chat-service:
+        condition: service_healthy
+    networks:
+      - chat-network
+
+networks:
+  chat-network:
+    driver: bridge
+
+volumes:
+  chat-mysql-data:

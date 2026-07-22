@@ -1,0 +1,8 @@
+target/
+*.log
+.git/
+.gitignore
+.idea/
+*.iml
+.vscode/
+react-client/
