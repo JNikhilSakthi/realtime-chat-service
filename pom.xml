@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
+        <version>4.0.6</version>
         <relativePath/>
     </parent>
 
@@ -19,7 +19,8 @@
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
+        <lombok.version>1.18.44</lombok.version>
     </properties>
 
     <dependencies>
@@ -69,6 +70,33 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Spring Boot 4's modularization split @WebMvcTest / MockMvc test support and
+             TestRestTemplate out of spring-boot-starter-test into their own modules. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-resttestclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- TestRestTemplate (spring-boot-resttestclient) references RestTemplateBuilder and
+             HttpComponentsHttpClientBuilder at construction time but does not declare
+             spring-boot-restclient/spring-boot-http-client as dependencies itself; without
+             them explicitly on the test classpath, "new TestRestTemplate()" fails with
+             NoClassDefFoundError. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-restclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-http-client</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- spring-websocket / spring-messaging already arrive transitively (compile scope)
              via spring-boot-starter-websocket above; the STOMP test client classes used in
              ChatWebSocketIntegrationTest come from those same jars. -->
@@ -92,6 +120,25 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- On JDK 25, javac's automatic annotation-processor discovery via the
+                         plain classpath does not reliably pick up Lombok; declaring it as an
+                         explicit annotationProcessorPath forces javac to load it via
+                         -processorpath, which does work. Without this, @Getter/@Setter/
+                         @Builder/etc. silently produce no generated members and the build
+                         fails with "cannot find symbol" errors. -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>
