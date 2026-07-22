@@ -1,0 +1,152 @@
+.join-card {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.join-card h1 {
+  margin: 0 0 4px;
+  font-size: 1.6rem;
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.error-banner {
+  background: #7f1d1d;
+  color: #fecaca;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.join-form,
+.create-room-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.join-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #cbd5e1;
+}
+
+.create-room-form {
+  flex-direction: row;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #334155;
+}
+
+.create-room-form input {
+  flex: 1;
+}
+
+.chat-window {
+  background: #1e293b;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 720px;
+  height: min(80vh, 640px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #334155;
+}
+
+.chat-header > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.online {
+  background: #22c55e;
+}
+
+.status-dot.offline {
+  background: #ef4444;
+}
+
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.92rem;
+}
+
+.message.join .system-event,
+.message.leave .system-event {
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+.message .sender {
+  font-weight: 700;
+  color: #a5b4fc;
+}
+
+.message.own .sender {
+  color: #86efac;
+}
+
+.message .timestamp {
+  margin-left: auto;
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.typing-indicator {
+  min-height: 20px;
+  padding: 0 20px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.message-form {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid #334155;
+}
+
+.message-form input {
+  flex: 1;
+}
