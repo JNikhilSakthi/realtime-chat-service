@@ -6,10 +6,10 @@ import com.medha.realtimechatservice.dto.ChatRoomCreateRequest;
 import com.medha.realtimechatservice.dto.ChatRoomResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -17,6 +17,7 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -44,11 +45,10 @@ class ChatWebSocketIntegrationTest {
     void setUp() {
         restTemplate = new TestRestTemplate();
         stompClient = new WebSocketStompClient(new StandardWebSocketClient());
-        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-        // The default ObjectMapper doesn't know java.time types out of the box; register the
-        // same JSR-310 module Spring Boot auto-configures for the server side so Instant
-        // fields (e.g. ChatMessageDto.sentAt) round-trip correctly in this test client.
-        converter.getObjectMapper().findAndRegisterModules();
+        // Jackson 3's JsonMapper has java.time (de)serialization support built into
+        // jackson-databind itself, so Instant fields (e.g. ChatMessageDto.sentAt) round-trip
+        // correctly without registering a separate JSR-310 module, unlike Jackson 2.
+        JacksonJsonMessageConverter converter = new JacksonJsonMessageConverter(JsonMapper.builder().build());
         stompClient.setMessageConverter(converter);
 
         ChatRoomCreateRequest createRequest = new ChatRoomCreateRequest("Integration Test Room", "created by test");

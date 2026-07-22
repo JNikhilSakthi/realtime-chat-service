@@ -1,6 +1,5 @@
 package com.medha.realtimechatservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medha.realtimechatservice.dto.ChatRoomCreateRequest;
 import com.medha.realtimechatservice.dto.ChatRoomResponse;
 import com.medha.realtimechatservice.exception.RoomNotFoundException;
@@ -8,10 +7,11 @@ import com.medha.realtimechatservice.service.ChatRoomService;
 import com.medha.realtimechatservice.service.PresenceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Instant;
 import java.util.List;
@@ -31,12 +31,12 @@ class ChatRoomControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private ChatRoomService chatRoomService;
 
-    @MockBean
+    @MockitoBean
     private PresenceService presenceService;
 
     @Test

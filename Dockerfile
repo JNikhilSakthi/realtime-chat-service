@@ -1,5 +1,5 @@
 # ---- Build stage -----------------------------------------------------------
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM maven:3.9-eclipse-temurin-25 AS build
 WORKDIR /build
 
 # Cache dependencies separately from source so code-only changes don't re-download the world.
@@ -11,7 +11,7 @@ RUN mvn -B -DskipTests package && \
     mv target/realtime-chat-service.jar target/app.jar
 
 # ---- Runtime stage ----------------------------------------------------------
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 
 RUN addgroup -S chatapp && adduser -S chatapp -G chatapp
